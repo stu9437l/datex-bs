@@ -10,9 +10,9 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YourUsername/datex-bs.git"
+    "url": "git+https://github.com/stu9437l/datex-bs.git"
   },
-  "homepage": "https://github.com/YourUsername/datex-bs#readme",
+  "homepage": "https://github.com/stu9437l/datex-bs#readme",
   "scripts": {
     "build": "tsc -p tsconfig.build.json && vite build",
     "lint": "eslint ."
