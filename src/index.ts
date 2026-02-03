@@ -3,5 +3,5 @@ export { convertBSToAD as bsToAd } from "./core/bsToAd";
 export { formatBS, parseBS } from "./format/formatBs";
 export type { BSDate } from "./types";
 
-export { getSupportedDateRange } from "./utils/ad";
+export { getSupportedDateRange, isDateInSupportedRange } from "./utils/ad";
 export { getBSSupportedRange, validateBSDate } from "./utils/bs";
