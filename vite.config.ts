@@ -13,7 +13,7 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      name: "@urekasystems/datex-bs",
+      name: "datex-bs",
       entry: resolve(__dirname, "src/index.ts"),
       formats: ["es", "cjs", "umd"],
       fileName: (format) => `index.${format}.js`,

@@ -1,5 +1,10 @@
 import { BS_CALENDAR } from "../data/calender";
-import { BASE_AD, BASE_BS } from "../data/defaultDate";
+import {
+  BASE_AD,
+  BASE_BS,
+  MAX_BS_YEAR,
+  MIN_BS_YEAR,
+} from "../data/defaultDate";
 import { diffDays } from "../core/dayCounter";
 import type { BSDate } from "../types";
 
@@ -17,6 +22,12 @@ export function convertADToBS(adDate: Date): BSDate {
     remainingDays = Math.abs(remainingDays);
 
     while (remainingDays > 0) {
+      if (year <= MIN_BS_YEAR && month === 1 && day === 1) {
+        throw new Error(
+          `Date is out of range. Minimum supported BS year is ${MIN_BS_YEAR}`,
+        );
+      }
+
       day--;
       if (day < 1) {
         month--;
@@ -24,6 +35,13 @@ export function convertADToBS(adDate: Date): BSDate {
           month = 12;
           year--;
         }
+
+        if (!BS_CALENDAR[year]) {
+          throw new Error(
+            `BS year ${year} not found in calendar. Supported range: ${MIN_BS_YEAR}-${MAX_BS_YEAR}`,
+          );
+        }
+
         day = BS_CALENDAR[year][month - 1];
       }
       remainingDays--;
@@ -33,11 +51,23 @@ export function convertADToBS(adDate: Date): BSDate {
   }
 
   while (remainingDays > 0) {
+    if (!BS_CALENDAR[year]) {
+      throw new Error(
+        `BS year ${year} not found in calendar. Supported range: ${MIN_BS_YEAR}-${MAX_BS_YEAR}`,
+      );
+    }
+
     const yearDays = BS_CALENDAR[year].reduce((sum, days) => sum + days, 0);
 
     if (remainingDays >= yearDays) {
       remainingDays -= yearDays;
       year++;
+
+      if (year > MAX_BS_YEAR) {
+        throw new Error(
+          `Date is out of range. Maximum supported BS year is ${MAX_BS_YEAR}`,
+        );
+      }
       continue;
     }
 
