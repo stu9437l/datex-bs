@@ -36,7 +36,7 @@ export const calculateDaysFromBaseToMaxYear = (targetYear: number): number => {
   return days;
 };
 
-export const getADSupportedRange = (): {
+export const getSupportedDateRange = (): {
   minYear: number;
   maxYear: number;
   minAD: Date;
