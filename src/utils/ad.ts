@@ -1,4 +1,4 @@
-import { convertADToBS } from "../core/adToBs";
+import { ADToBS } from "../core/adToBs";
 import { BS_CALENDAR } from "../data/calender";
 import {
   BASE_AD,
@@ -9,7 +9,7 @@ import {
 
 export const isDateInSupportedRange = (adDate: Date): boolean => {
   try {
-    convertADToBS(adDate);
+    ADToBS(adDate);
     return true;
   } catch {
     return false;

@@ -8,7 +8,28 @@ import {
 import { diffDays } from "../core/dayCounter";
 import type { BSDate } from "../types";
 
-export function convertADToBS(adDate: Date): BSDate {
+export const ADToBS = (ad: string | Date): string => {
+  let adDate: Date;
+
+  if (typeof ad === "string") {
+    const [year, month, day] = ad.split("-").map(Number);
+
+    if (!year || !month || !day) {
+      throw new Error(`Invalid AD date format. Expected YYYY-MM-DD`);
+    }
+
+    // JS Date month is 0-based
+    adDate = new Date(year, month - 1, day);
+  } else {
+    adDate = ad;
+  }
+
+  const { year, month, day } = convertADToBS(adDate);
+
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+};
+
+const convertADToBS = (adDate: Date): BSDate => {
   const totalDays = diffDays(BASE_AD, adDate);
 
   if (totalDays === 0) {
@@ -91,4 +112,4 @@ export function convertADToBS(adDate: Date): BSDate {
   }
 
   return { year, month, day };
-}
+};

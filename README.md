@@ -14,6 +14,8 @@ A lightweight TypeScript library for converting dates between AD (Gregorian) and
 - ✅ Lightweight with no dependencies
 - ✅ Supports BS years from 1970 to 2300
 - ✅ Optimized conversion algorithms
+- ✅ Flexible input formats (string, Date object, BSDate object)
+- ✅ String or object output options
 
 ## Installation
 
@@ -36,95 +38,175 @@ pnpm add datex-bs
 ## Quick Start
 
 ```typescript
-import { adToBs, bsToAd } from "datex-bs";
+import { ADToBS, BSToAD } from "datex-bs";
 
-// Convert AD to BS
-const bsDate = adToBs(new Date("2024-02-03"));
-console.log(bsDate); // { year: 2080, month: 10, day: 21 }
+// Convert AD to BS (returns formatted string)
+ADToBS("2024-02-03");
+// → "2080-10-21"
 
-// Convert BS to AD
-const adDate = bsToAd({ year: 2080, month: 10, day: 21 });
-console.log(adDate); // 2024-02-03T00:00:00.000Z
+ADToBS(new Date(2024, 1, 3));
+// → "2080-10-21"
+
+// Convert BS to AD (returns formatted string)
+BSToAD("2080-10-21");
+// → "2024-02-03"
+
+BSToAD({ year: 2080, month: 10, day: 21 });
+// → "2024-02-03"
 ```
 
 ## API Reference
 
-### `adToBs(adDate: Date): BSDate`
+### `ADToBS(adDate: Date | string): string`
 
-Converts an AD (Gregorian) date to BS (Bikram Sambat) date.
+Converts an AD (Gregorian) date to BS (Bikram Sambat) date string.
 
 **Parameters:**
 
-- `adDate` (Date): The AD date to convert
+- `adDate` (Date | string): The AD date to convert
+  - String format: `"YYYY-MM-DD"`
+  - Date object: JavaScript Date
 
 **Returns:**
 
-- `BSDate`: Object containing `{ year, month, day }`
+- `string`: BS date in format `"YYYY-MM-DD"`
 
-**Example:**
+**Examples:**
 
 ```typescript
-import { adToBs } from "datex-bs";
+import { ADToBS } from "datex-bs";
 
-const bsDate = adToBs(new Date("2023-04-14"));
-console.log(bsDate);
-// Output: { year: 2080, month: 1, day: 1 }
+// Using string input
+ADToBS("2019-08-25");
+// → "2076-05-08"
+
+ADToBS("2023-04-14");
+// → "2080-01-01"
+
+// Using Date object
+ADToBS(new Date(2019, 7, 25)); // Note: month is 0-indexed
+// → "2076-05-08"
+
+ADToBS(new Date("2024-12-25"));
+// → "2081-09-10"
 
 // Using current date
-const today = adToBs(new Date());
-console.log(today);
-// Output: { year: 2081, month: 10, day: 21 } (example)
+ADToBS(new Date());
+// → "2081-10-21" (example)
 ```
 
 **Error Handling:**
 
 ```typescript
 try {
-  const bsDate = adToBs(new Date("1800-01-01"));
+  const bsDate = ADToBS("1800-01-01");
 } catch (error) {
   console.error(error.message);
-  // Output: "Date is out of range. Minimum supported BS year is 1970"
+  // → "Date is out of range. Minimum supported BS year is 1970"
 }
 ```
 
 ---
 
-### `bsToAd(bs: BSDate): Date`
+### `BSToAD(bsDate: string | BSDate): string`
 
-Converts a BS (Bikram Sambat) date to AD (Gregorian) date.
+Converts a BS (Bikram Sambat) date to AD (Gregorian) date string.
 
 **Parameters:**
 
-- `bs` (BSDate): Object with `{ year, month, day }`
+- `bsDate` (string | BSDate): The BS date to convert
+  - String format: `"YYYY-MM-DD"`
+  - Object format: `{ year, month, day }`
 
 **Returns:**
 
-- `Date`: JavaScript Date object
+- `string`: AD date in format `"YYYY-MM-DD"`
 
-**Example:**
+**Examples:**
 
 ```typescript
-import { bsToAd } from "datex-bs";
+import { BSToAD } from "datex-bs";
 
-const adDate = bsToAd({ year: 2080, month: 1, day: 1 });
-console.log(adDate);
-// Output: 2023-04-14T00:00:00.000Z
+// Using string input
+BSToAD("2076-05-08");
+// → "2019-08-25"
 
-// Format the date as needed
-const formatted = adDate.toLocaleDateString("en-US");
-console.log(formatted);
-// Output: "4/14/2023"
+BSToAD("2080-01-01");
+// → "2023-04-14"
+
+// Using object input
+BSToAD({ year: 2076, month: 5, day: 8 });
+// → "2019-08-25"
+
+BSToAD({ year: 2081, month: 9, day: 10 });
+// → "2024-12-25"
 ```
 
 **Error Handling:**
 
 ```typescript
 try {
-  const adDate = bsToAd({ year: 1800, month: 1, day: 1 });
+  const adDate = BSToAD("1800-01-01");
 } catch (error) {
   console.error(error.message);
-  // Output: "Invalid BS date: 1800-1-1. Supported year range: 1970-2300"
+  // → "Invalid BS date: 1800-1-1. Supported year range: 1970-2300"
 }
+```
+
+---
+
+### `convertADToBS(adDate: Date | string): BSDate`
+
+Converts an AD date to BS date object (for detailed manipulation).
+
+**Parameters:**
+
+- `adDate` (Date | string): The AD date to convert
+
+**Returns:**
+
+- `BSDate`: Object containing `{ year, month, day }`
+
+**Examples:**
+
+```typescript
+import { convertADToBS } from "datex-bs";
+
+const bsDate = convertADToBS("2023-04-14");
+console.log(bsDate);
+// → { year: 2080, month: 1, day: 1 }
+
+const today = convertADToBS(new Date());
+console.log(`${today.year}/${today.month}/${today.day}`);
+// → "2081/10/21"
+```
+
+---
+
+### `convertBSToAD(bsDate: string | BSDate): Date`
+
+Converts a BS date to AD Date object (for detailed manipulation).
+
+**Parameters:**
+
+- `bsDate` (string | BSDate): The BS date to convert
+
+**Returns:**
+
+- `Date`: JavaScript Date object
+
+**Examples:**
+
+```typescript
+import { convertBSToAD } from "datex-bs";
+
+const adDate = convertBSToAD("2080-01-01");
+console.log(adDate);
+// → 2023-04-14T00:00:00.000Z
+
+const adDate2 = convertBSToAD({ year: 2080, month: 1, day: 1 });
+console.log(adDate2.toLocaleDateString("en-US"));
+// → "4/14/2023"
 ```
 
 ---
@@ -141,39 +223,26 @@ Validates a BS date and provides detailed error information.
 
 - Object with `valid` boolean and optional `error` message
 
-**Example:**
+**Examples:**
 
 ```typescript
 import { validateBSDate } from "datex-bs";
 
 // Valid date
-const result1 = validateBSDate({ year: 2080, month: 1, day: 1 });
-console.log(result1);
-// Output: { valid: true }
+validateBSDate({ year: 2080, month: 1, day: 1 });
+// → { valid: true }
 
 // Invalid year
-const result2 = validateBSDate({ year: 1800, month: 1, day: 1 });
-console.log(result2);
-// Output: {
-//   valid: false,
-//   error: "Year 1800 is out of range. Supported: 1970-2300"
-// }
+validateBSDate({ year: 1800, month: 1, day: 1 });
+// → { valid: false, error: "Year 1800 is out of range. Supported: 1970-2300" }
 
 // Invalid month
-const result3 = validateBSDate({ year: 2080, month: 13, day: 1 });
-console.log(result3);
-// Output: {
-//   valid: false,
-//   error: "Month 13 is invalid. Must be between 1-12"
-// }
+validateBSDate({ year: 2080, month: 13, day: 1 });
+// → { valid: false, error: "Month 13 is invalid. Must be between 1-12" }
 
-// Invalid day for the month
-const result4 = validateBSDate({ year: 2080, month: 1, day: 35 });
-console.log(result4);
-// Output: {
-//   valid: false,
-//   error: "Day 35 is invalid for 2080/1. Must be between 1-31"
-// }
+// Invalid day
+validateBSDate({ year: 2080, month: 1, day: 35 });
+// → { valid: false, error: "Day 35 is invalid for 2080/1. Must be between 1-31" }
 ```
 
 ---
@@ -193,67 +262,99 @@ import { getBSSupportedRange } from "datex-bs";
 
 const range = getBSSupportedRange();
 console.log(range);
-// Output: { minYear: 1970, maxYear: 2300 }
-
-console.log(
-  `This library supports BS years from ${range.minYear} to ${range.maxYear}`,
-);
-// Output: "This library supports BS years from 1970 to 2300"
+// → { minYear: 1970, maxYear: 2300 }
 ```
 
 ---
 
-### `getSupportedDateRange(): { minYear, maxYear, minAD, maxAD }`
+### `formatBSDate(bs: BSDate): string`
 
-Returns detailed information about supported date ranges in both BS and AD.
-
-**Returns:**
-
-- Object containing:
-  - `minYear`: Minimum BS year
-  - `maxYear`: Maximum BS year
-  - `minAD`: Approximate minimum AD date
-  - `maxAD`: Approximate maximum AD date
-
-**Example:**
-
-```typescript
-import { getSupportedDateRange } from "datex-bs";
-
-const range = getSupportedDateRange();
-console.log(range);
-// Output: {
-//   minYear: 1970,
-//   maxYear: 2300,
-//   minAD: Date('1913-04-13'),
-//   maxAD: Date('2243-04-13')
-// }
-```
-
----
-
-### `isDateInSupportedRange(adDate: Date): boolean`
-
-Checks if an AD date can be converted to BS.
+Formats a BSDate object to string format.
 
 **Parameters:**
 
-- `adDate` (Date): The AD date to check
+- `bs` (BSDate): BS date object
 
 **Returns:**
 
-- `boolean`: `true` if the date is supported, `false` otherwise
+- `string`: Formatted date string `"YYYY-MM-DD"`
 
 **Example:**
 
 ```typescript
-import { isDateInSupportedRange } from "datex-bs";
+import { formatBSDate } from "datex-bs";
 
-const isSupported1 = isDateInSupportedRange(new Date("2024-02-03"));
-console.log(isSupported1); // true
+formatBSDate({ year: 2080, month: 1, day: 1 });
+// → "2080-01-01"
+```
 
-const isSupported2 = isDateInSupportedRange(new Date("1800-01-01"));
-console.log(isSupported2); // false
+---
+
+### `formatADDate(date: Date): string`
+
+Formats a Date object to string format.
+
+**Parameters:**
+
+- `date` (Date): JavaScript Date object
+
+**Returns:**
+
+- `string`: Formatted date string `"YYYY-MM-DD"`
+
+**Example:**
+
+```typescript
+import { formatADDate } from "datex-bs";
+
+formatADDate(new Date("2023-04-14"));
+// → "2023-04-14"
+```
+
+---
+
+### Class API: `BikramSambat`
+
+Object-oriented interface for date conversion.
+
+**Constructor:**
+
+```typescript
+new BikramSambat(date: Date | string, format?: "AD" | "BS")
+```
+
+**Methods:**
+
+- `toBS(): string` - Convert to BS string
+- `toAD(): string` - Convert to AD string
+- `getBSDate(): BSDate` - Get BS date object
+- `getDate(): Date` - Get AD Date object
+
+**Examples:**
+
+```typescript
+import BikramSambat from "datex-bs";
+
+// Create from AD date
+const bs1 = new BikramSambat("2019-08-25");
+bs1.toBS();
+// → "2076-05-08"
+
+const bs2 = new BikramSambat(new Date(2019, 7, 25));
+bs2.toBS();
+// → "2076-05-08"
+
+// Create from BS date
+const bs3 = new BikramSambat("2076-05-08", "BS");
+bs3.toAD();
+// → "2019-08-25"
+
+// Get detailed objects
+const bsDate = bs1.getBSDate();
+// → { year: 2076, month: 5, day: 8 }
+
+const adDate = bs3.getDate();
+// → Date object
 ```
 
 ---
@@ -275,21 +376,27 @@ interface BSDate {
 ### Example 1: Basic Conversion
 
 ```typescript
-import { adToBs, bsToAd } from "datex-bs";
+import { ADToBS, BSToAD } from "datex-bs";
 
-// AD to BS
-const bsDate = adToBs(new Date("2024-12-25"));
-console.log(`BS Date: ${bsDate.year}/${bsDate.month}/${bsDate.day}`);
+// String to string conversion
+const bs = ADToBS("2024-12-25");
+console.log(`BS Date: ${bs}`);
+// → "BS Date: 2081-09-10"
 
-// BS to AD
-const adDate = bsToAd({ year: 2081, month: 9, day: 10 });
-console.log(`AD Date: ${adDate.toDateString()}`);
+const ad = BSToAD("2081-09-10");
+console.log(`AD Date: ${ad}`);
+// → "AD Date: 2024-12-25"
+
+// Object input
+const ad2 = BSToAD({ year: 2081, month: 9, day: 10 });
+console.log(ad2);
+// → "2024-12-25"
 ```
 
 ### Example 2: With Validation
 
 ```typescript
-import { bsToAd, validateBSDate } from "datex-bs";
+import { BSToAD, validateBSDate } from "datex-bs";
 
 const bsInput = { year: 2080, month: 12, day: 30 };
 
@@ -297,103 +404,87 @@ const bsInput = { year: 2080, month: 12, day: 30 };
 const validation = validateBSDate(bsInput);
 
 if (validation.valid) {
-  const adDate = bsToAd(bsInput);
-  console.log("Converted successfully:", adDate);
+  const adDate = BSToAD(bsInput);
+  console.log("Converted:", adDate);
 } else {
   console.error("Validation failed:", validation.error);
 }
 ```
 
-### Example 3: Error Handling
+### Example 3: Working with Objects
 
 ```typescript
-import { adToBs } from "datex-bs";
+import { convertADToBS, convertBSToAD } from "datex-bs";
 
-try {
-  const bsDate = adToBs(new Date("1500-01-01"));
-  console.log(bsDate);
-} catch (error) {
-  if (error instanceof Error) {
-    console.error("Conversion failed:", error.message);
+// Get BS date object for manipulation
+const bsDate = convertADToBS("2024-02-03");
+console.log(`Year: ${bsDate.year}, Month: ${bsDate.month}, Day: ${bsDate.day}`);
+// → "Year: 2080, Month: 10, Day: 21"
+
+// Convert back using object
+const adDate = convertBSToAD(bsDate);
+console.log(adDate.toISOString());
+// → "2024-02-03T00:00:00.000Z"
+```
+
+### Example 4: Current Date
+
+```typescript
+import { ADToBS, convertADToBS } from "datex-bs";
+
+// Get today's date in BS (string format)
+const todayBS = ADToBS(new Date());
+console.log(`Today in BS: ${todayBS}`);
+
+// Get today's date in BS (object format)
+const todayBSObj = convertADToBS(new Date());
+console.log(`${todayBSObj.year}/${todayBSObj.month}/${todayBSObj.day}`);
+```
+
+### Example 5: Form Integration
+
+```typescript
+import { BSToAD, validateBSDate } from "datex-bs";
+
+function handleBSDateSubmit(year: number, month: number, day: number) {
+  const validation = validateBSDate({ year, month, day });
+
+  if (!validation.valid) {
+    alert(validation.error);
+    return;
   }
+
+  const adDate = BSToAD({ year, month, day });
+  console.log(`Selected AD date: ${adDate}`);
 }
 ```
 
-### Example 4: Current Date Conversion
-
-```typescript
-import { adToBs } from "datex-bs";
-
-const currentBSDate = adToBs(new Date());
-console.log(
-  `Today in BS: ${currentBSDate.year}/${currentBSDate.month}/${currentBSDate.day}`,
-);
-```
-
-### Example 5: Date Range Validation
-
-```typescript
-import { isDateInSupportedRange, adToBs } from "datex-bs";
-
-const userDate = new Date("2025-06-15");
-
-if (isDateInSupportedRange(userDate)) {
-  const bsDate = adToBs(userDate);
-  console.log("Converted:", bsDate);
-} else {
-  console.log("Date is outside supported range");
-}
-```
-
-### Example 6: Building a Date Picker
-
-```typescript
-import { bsToAd, validateBSDate, getBSSupportedRange } from "datex-bs";
-
-function createBSDatePicker() {
-  const range = getBSSupportedRange();
-
-  // Generate year options
-  const years = Array.from(
-    { length: range.maxYear - range.minYear + 1 },
-    (_, i) => range.minYear + i,
-  );
-
-  return {
-    years,
-    months: Array.from({ length: 12 }, (_, i) => i + 1),
-    validateAndConvert: (year: number, month: number, day: number) => {
-      const validation = validateBSDate({ year, month, day });
-
-      if (!validation.valid) {
-        return { error: validation.error };
-      }
-
-      const adDate = bsToAd({ year, month, day });
-      return { date: adDate };
-    },
-  };
-}
-```
-
-### Example 7: React Component
+### Example 6: React Component
 
 ```typescript
 import { useState } from 'react';
-import { adToBs, bsToAd, type BSDate } from 'datex-bs';
+import { ADToBS, BSToAD, convertADToBS, type BSDate } from 'datex-bs';
 
 function DateConverter() {
-  const [adDate, setAdDate] = useState(new Date());
-  const [bsDate, setBsDate] = useState<BSDate>(adToBs(new Date()));
+  const [adDateStr, setAdDateStr] = useState("2024-02-03");
+  const [bsDateStr, setBsDateStr] = useState(ADToBS("2024-02-03"));
 
-  const handleADChange = (date: Date) => {
-    setAdDate(date);
-    setBsDate(adToBs(date));
+  const handleADChange = (dateStr: string) => {
+    setAdDateStr(dateStr);
+    try {
+      setBsDateStr(ADToBS(dateStr));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleBSChange = (bs: BSDate) => {
-    setBsDate(bs);
-    setAdDate(bsToAd(bs));
+  const handleBSChange = (dateStr: string) => {
+    setBsDateStr(dateStr);
+    try {
+      setAdDateStr(BSToAD(dateStr));
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -402,21 +493,75 @@ function DateConverter() {
         <label>AD Date:</label>
         <input
           type="date"
-          value={adDate.toISOString().split('T')[0]}
-          onChange={(e) => handleADChange(new Date(e.target.value))}
+          value={adDateStr}
+          onChange={(e) => handleADChange(e.target.value)}
         />
       </div>
 
       <div>
         <label>BS Date:</label>
-        <span>
-          {bsDate.year}/{bsDate.month}/{bsDate.day}
-        </span>
+        <input
+          type="text"
+          value={bsDateStr}
+          onChange={(e) => handleBSChange(e.target.value)}
+          placeholder="YYYY-MM-DD"
+        />
       </div>
     </div>
   );
 }
 ```
+
+### Example 7: Class-based Approach
+
+```typescript
+import BikramSambat from "datex-bs";
+
+// Convert AD to BS
+const converter1 = new BikramSambat("2019-08-25");
+console.log(converter1.toBS());
+// → "2076-05-08"
+
+// Convert BS to AD
+const converter2 = new BikramSambat("2076-05-08", "BS");
+console.log(converter2.toAD());
+// → "2019-08-25"
+
+// Get detailed objects
+const bsObj = converter1.getBSDate();
+console.log(bsObj);
+// → { year: 2076, month: 5, day: 8 }
+```
+
+## Input/Output Formats
+
+### ADToBS
+
+| Input Type | Example                 | Output         |
+| ---------- | ----------------------- | -------------- |
+| String     | `"2019-08-25"`          | `"2076-05-08"` |
+| Date       | `new Date(2019, 7, 25)` | `"2076-05-08"` |
+
+### BSToAD
+
+| Input Type | Example                            | Output         |
+| ---------- | ---------------------------------- | -------------- |
+| String     | `"2076-05-08"`                     | `"2019-08-25"` |
+| Object     | `{ year: 2076, month: 5, day: 8 }` | `"2019-08-25"` |
+
+### convertADToBS
+
+| Input Type | Example                 | Output                             |
+| ---------- | ----------------------- | ---------------------------------- |
+| String     | `"2019-08-25"`          | `{ year: 2076, month: 5, day: 8 }` |
+| Date       | `new Date(2019, 7, 25)` | `{ year: 2076, month: 5, day: 8 }` |
+
+### convertBSToAD
+
+| Input Type | Example                            | Output        |
+| ---------- | ---------------------------------- | ------------- |
+| String     | `"2076-05-08"`                     | `Date object` |
+| Object     | `{ year: 2076, month: 5, day: 8 }` | `Date object` |
 
 ## Supported Date Range
 
