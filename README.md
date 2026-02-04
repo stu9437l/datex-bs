@@ -12,7 +12,7 @@ A lightweight TypeScript library for converting dates between AD (Gregorian) and
 - ✅ Validate BS dates
 - ✅ TypeScript support with full type definitions
 - ✅ Lightweight with no dependencies
-- ✅ Supports BS years from 1970 to 2300
+- ✅ Supports BS years from 1977 to 2200
 - ✅ Optimized conversion algorithms
 - ✅ Flexible input formats (string, Date object, BSDate object)
 - ✅ String or object output options
@@ -102,7 +102,7 @@ try {
   const bsDate = ADToBS("1800-01-01");
 } catch (error) {
   console.error(error.message);
-  // → "Date is out of range. Minimum supported BS year is 1970"
+  // → "Date is out of range. Minimum supported BS year is 1977"
 }
 ```
 
@@ -149,7 +149,7 @@ try {
   const adDate = BSToAD("1800-01-01");
 } catch (error) {
   console.error(error.message);
-  // → "Invalid BS date: 1800-1-1. Supported year range: 1970-2300"
+  // → "Invalid BS date: 1800-1-1. Supported year range: 1977-2200"
 }
 ```
 
@@ -234,7 +234,7 @@ validateBSDate({ year: 2080, month: 1, day: 1 });
 
 // Invalid year
 validateBSDate({ year: 1800, month: 1, day: 1 });
-// → { valid: false, error: "Year 1800 is out of range. Supported: 1970-2300" }
+// → { valid: false, error: "Year 1800 is out of range. Supported: 1977-2200" }
 
 // Invalid month
 validateBSDate({ year: 2080, month: 13, day: 1 });
@@ -262,7 +262,7 @@ import { getBSSupportedRange } from "datex-bs";
 
 const range = getBSSupportedRange();
 console.log(range);
-// → { minYear: 1970, maxYear: 2300 }
+// → { minYear: 1977, maxYear: 2200 }
 ```
 
 ---
@@ -365,7 +365,7 @@ const adDate = bs3.getDate();
 
 ```typescript
 interface BSDate {
-  year: number; // BS year (1970-2300)
+  year: number; // BS year (1977-2200)
   month: number; // Month (1-12)
   day: number; // Day (1-32, depending on month)
 }
@@ -565,7 +565,7 @@ console.log(bsObj);
 
 ## Supported Date Range
 
-- **BS Years:** 1970 - 2300
+- **BS Years:** 1977 - 2200
 - **AD Years:** Approximately 1913 - 2243
 
 ## Browser Support
