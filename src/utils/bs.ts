@@ -17,57 +17,25 @@ export const calculateDaysBetweenBS = (from: BSDate, to: BSDate): number => {
   }
 
   let days = 0;
-  let { year, month, day } = from;
+  let y = from.year;
+  let m = from.month;
+  let d = from.day;
 
-  if (!BS_CALENDAR[year]) {
-    throw new Error(
-      `BS year ${year} not found in calendar. Supported range: ${MIN_BS_YEAR}-${MAX_BS_YEAR}`,
-    );
-  }
+  // move day-by-day until target
+  while (y !== to.year || m !== to.month || d !== to.day) {
+    days++;
+    d++;
 
-  days += BS_CALENDAR[year][month - 1] - day;
-  month++;
-
-  while (year < to.year) {
-    if (month > 12) {
-      month = 1;
-      year++;
-      continue;
+    if (d > BS_CALENDAR[y][m - 1]) {
+      d = 1;
+      m++;
     }
 
-    if (!BS_CALENDAR[year]) {
-      throw new Error(
-        `BS year ${year} not found in calendar. Supported range: ${MIN_BS_YEAR}-${MAX_BS_YEAR}`,
-      );
-    }
-
-    if (year < to.year - 1 || (year === to.year - 1 && month === 1)) {
-      days += BS_CALENDAR[year].reduce((sum, monthDays) => sum + monthDays, 0);
-      year++;
-      month = 1;
-    } else {
-      days += BS_CALENDAR[year][month - 1];
-      month++;
+    if (m > 12) {
+      m = 1;
+      y++;
     }
   }
-
-  if (month > 12) {
-    month = 1;
-    year++;
-  }
-
-  if (!BS_CALENDAR[year]) {
-    throw new Error(
-      `BS year ${year} not found in calendar. Supported range: ${MIN_BS_YEAR}-${MAX_BS_YEAR}`,
-    );
-  }
-
-  while (month < to.month) {
-    days += BS_CALENDAR[year][month - 1];
-    month++;
-  }
-
-  days += to.day;
 
   return days;
 };

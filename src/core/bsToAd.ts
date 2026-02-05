@@ -30,7 +30,19 @@ const convertBSToAD = (bs: BSDate): Date => {
 
   const totalDays = calculateDaysBetweenBS(BASE_BS, bs);
 
-  const result = new Date(BASE_AD);
-  result.setDate(result.getDate() + totalDays);
-  return result;
+  console.log("BASE_BS:", BASE_BS);
+  console.log("Target BS:", bs);
+  console.log("Total days calculated:", totalDays);
+
+  const baseDate = new Date(BASE_AD);
+
+  const baseTimestamp = Date.UTC(
+    baseDate.getUTCFullYear(),
+    baseDate.getUTCMonth(),
+    baseDate.getUTCDate(),
+  );
+
+  const resultTimestamp = baseTimestamp + totalDays * 24 * 60 * 60 * 1000;
+
+  return new Date(resultTimestamp);
 };
