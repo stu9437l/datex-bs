@@ -12,7 +12,7 @@ console.log(BSToAD("2082-01-01"));
 
 
 
-const isSupported1 = isDateInSupportedRange(new Date("2024-02-03"));
+const isSupported1 = isDateInSupportedRange(new Date("3000-02-03"));
 console.log(isSupported1); // true
 
 

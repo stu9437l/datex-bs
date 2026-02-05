@@ -7,7 +7,7 @@ import {
 import type { BSDate } from "../types";
 import { calculateDaysBetweenBS, isValidBSDate } from "../utils/bs";
 
-export const BSToAD = (bsDate: string): Date => {
+export const BSToAD = (bsDate: string): string => {
   const [year, month, day] = bsDate.split("-").map(Number);
 
   if (!year || !month || !day) {
@@ -19,7 +19,7 @@ export const BSToAD = (bsDate: string): Date => {
   return convertBSToAD(bs);
 };
 
-const convertBSToAD = (bs: BSDate): Date => {
+const convertBSToAD = (bs: BSDate): string => {
   if (!isValidBSDate(bs)) {
     throw new Error(
       `Invalid BS date: ${bs.year}-${bs.month}-${bs.day}. ` +
@@ -44,5 +44,10 @@ const convertBSToAD = (bs: BSDate): Date => {
 
   const resultTimestamp = baseTimestamp + totalDays * 24 * 60 * 60 * 1000;
 
-  return new Date(resultTimestamp);
+  const resultDate = new Date(resultTimestamp);
+  resultDate.setUTCHours(0, 0, 0, 0);
+
+  console.log({ resultTimestamp });
+
+  return resultDate.toISOString().split("T")[0];
 };
