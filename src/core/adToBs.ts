@@ -19,7 +19,7 @@ export const ADToBS = (ad: string | Date): string => {
     }
 
     // JS Date month is 0-based
-    adDate = new Date(year, month - 1, day);
+    adDate = new Date(Date.UTC(year, month - 1, day));
   } else {
     adDate = ad;
   }
