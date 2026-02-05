@@ -1,6 +1,6 @@
 {
   "name": "datex-bs",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": false,
   "description": "A lightweight **Bikram Sambat (BS) / Nepali calendar utility library** for converting between **AD (Gregorian) and BS (Bikram Sambat)** dates in JavaScript/TypeScript.",
   "homepage": "https://github.com/stu9437l/datex-bs#readme",
